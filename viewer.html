@@ -1,0 +1,76 @@
+<html>
+
+<head>
+    <title>bpmn-js file viewer</title>
+
+    <!-- required viewer styles -->
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@16.3.0/dist/assets/bpmn-js.css">
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+
+        .header input[type=text] {
+            width: 500px;
+            max-width: 100%;
+        }
+
+        .console textarea {
+            width: 100%;
+            min-height: 80px;
+            border: none;
+            padding: 0;
+        }
+
+        .canvas {
+            border: solid 1px black;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h3>Open BPMN 2.0 diagram from file</h3>
+        <p>
+            <input type="file" id="js-file" onchange="viewFile()" />
+        </p>
+    </div>
+
+    <div class="canvas">
+        <div id="js-canvas"></div>
+    </div>
+
+    <!-- viewer -->
+    <script src="https://unpkg.com/bpmn-js@16.3.0/dist/bpmn-viewer.development.js"></script>
+
+    <!-- jquery (required for example only) -->
+    <script src="https://unpkg.com/jquery@3.3.1/dist/jquery.js"></script>
+
+    <!-- app -->
+
+    <script>
+        var viewer = new BpmnJS({
+            container: $('#js-canvas'),
+            // height: 700
+        });
+
+        function viewFile() {
+            const [file] = document.querySelector("input[type=file]").files;
+            const reader = new FileReader()
+            reader.addEventListener("load", async function () {
+                try {
+                    await viewer.importXML(reader.result);
+                    viewer.get('canvas').zoom('fit-viewport');
+                } catch (err) {
+                    console.error(err);
+                }
+            }, false)
+
+            if (file) {
+                reader.readAsText(file)
+            }
+        }
+    </script>
+</html>
